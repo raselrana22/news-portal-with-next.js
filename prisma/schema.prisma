@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Users table 
+model users {
+  id        Int    @id @default(autoincrement())
+  firstName String @db.VarChar(50)
+  lastName  String @db.VarChar(50)
+  email     String @unique @db.VarChar(50)
+  mobile    String @db.VarChar(50)
+  password  String @db.VarChar(50)
+  otp       String @db.VarChar(10)
+
+  comments  comments[]
+  createdAt DateTime   @default(now()) @db.Timestamp(0)
+  updatedAt DateTime   @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+// Comments table
+model comments {
+  id          Int      @id @default(autoincrement())
+  userID      Int
+  postId      Int
+  users       users    @relation(fields: [userID], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  newsList    newsList @relation(fields: [postId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  description String   @db.VarChar(1000)
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+//news list table
+model newsList {
+  id               Int        @id @default(autoincrement())
+  title            String     @db.VarChar(100)
+  shortDescription String     @db.VarChar(400)
+  img1             String     @db.VarChar(300)
+  img2             String     @db.VarChar(300)
+  img3             String     @db.VarChar(300)
+  img4             String     @db.VarChar(300)
+  keywords         String     @db.VarChar(300)
+  longDescription  String     @db.LongText
+  type             String     @db.VarChar(200)
+  categoriesId     Int
+  categories       categories @relation(fields: [categoriesId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  comments comments[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(0)
+}
+
+// Categories table
+model categories {
+  id       Int        @id @default(autoincrement())
+  newsList newsList[]
+
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(0)
+}
