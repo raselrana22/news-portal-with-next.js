@@ -61,7 +61,7 @@ const RegistrationForm = () => {
           console.log("Registration successful:", postData);
           alert("Registration successful");
           // Use router to navigate to the desired page
-          router.push("/");
+          router.push("/user/login");
         } else {
           console.error("Registration failed:", responseData.data);
           alert("Registration failed");
