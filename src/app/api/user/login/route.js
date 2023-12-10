@@ -3,6 +3,7 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcrypt';
+import { CreateToken } from "@/app/utility/JWTTokenHelper";
 
 export async function POST(req, res) {
   try {
@@ -25,22 +26,30 @@ export async function POST(req, res) {
 
     // Check if the provided password matches the stored hashed password
     const passwordMatch = await bcrypt.compare(password.trim(), user.password);
-    console.log("Password matches result", passwordMatch);
     if (!passwordMatch) {
       await prisma.$disconnect();
       return NextResponse.json({ status: "fail", data: "Invalid email or password" });
     }
 
-    // You can include additional user data in the response if needed
+    // Create token
+    const token = await  CreateToken(user.email, user.id); 
+    const expirationDate = new Date(Date.now() + 24*60*60*1000);
+    const cookieString = `token=${token}; expires=${expirationDate.toUTCString()}; path=/`;
+
+    // Response data
     const responseData = {
       userId: user.id,
       email: user.email,
-      // Add other user data as needed
+      token: token,
     };
 
     await prisma.$disconnect();
 
-    return NextResponse.json({ status: "success", data: responseData });
+    return NextResponse.json(
+      { status: "success", data: responseData }, 
+      {status: 200, headers: {'set-cookie': cookieString}}
+    );
+
   } catch (error) {
     return NextResponse.json({ status: "fail", data: error.message });
   }
