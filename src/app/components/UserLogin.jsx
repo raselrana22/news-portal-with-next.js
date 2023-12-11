@@ -63,6 +63,12 @@ const LoginForm = () => {
     }
   };
 
+  // Forget password function
+  const handleForgetPasswordClick = () => {
+    // Redirect the user to the "/user/emailVerify" route
+    router.push("/user/emailVerify");
+  };
+
   // The form data validation
   const validateForm = (data) => {
     let errors = {};
@@ -111,6 +117,16 @@ const LoginForm = () => {
             }`}
           />
           {errors.password && <p className="text-red-500">{errors.password}</p>}
+        </div>
+        {/*Forget password button */}
+        <div className="">
+          <button
+            type="button"
+            onClick={handleForgetPasswordClick}
+            className="text-blue-500 underline"
+          >
+            Forgot Password?
+          </button>
         </div>
 
         <button
