@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const EmailVerifyComponent = () => {
+const EmailVerifyComponent = ({ onSubmit }) => {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -37,6 +37,8 @@ const EmailVerifyComponent = () => {
 
       if (data.status === "success") {
         console.log("Email verification successful:", data.data);
+
+        onSubmit(verificationResult);
       } else {
         console.error("Email verification failed:", data.data);
       }
